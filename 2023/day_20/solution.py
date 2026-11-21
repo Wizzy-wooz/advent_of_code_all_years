@@ -11,7 +11,7 @@ def parse(d):
     return mods, outs
 
 
-def simulate(d, presses=1000):
+def simulate(d, presses=1000, find_rx=False):
     mods, outs = parse(d);
     flip = {x: False for x, t in mods.items() if t == "%"};
     conj = {x: {} for x, t in mods.items() if t == "&"}
@@ -27,7 +27,8 @@ def simulate(d, presses=1000):
             src, dst, pulse = q.popleft();
             low += not pulse;
             high += pulse
-            if dst == "rx" and not pulse: events["rx"] = press
+            if find_rx and dst == "rx" and not pulse:
+                return press
             if dst not in mods: continue
             typ = mods[dst]
             if typ == "b":
@@ -39,21 +40,31 @@ def simulate(d, presses=1000):
             else:
                 conj[dst][src] = pulse;
                 out = not all(conj[dst].values())
-            if dst == rx_parent and out: events[src] = events.get(src, []) + [press]
+            if find_rx and dst == rx_parent and pulse:
+                hits = events.setdefault(src, [])
+                if not hits or hits[-1] != press:
+                    hits.append(press)
+                if all(len(events.get(source, [])) >= 3 for source in conj[rx_parent]):
+                    periods = []
+                    for values in events.values():
+                        period = values[1] - values[0]
+                        if values[0] != period or values[2] != 3 * period:
+                            break
+                        periods.append(period)
+                    else:
+                        return lcm(*periods)
             q.extend((dst, b, out) for b in outs[dst])
         if press == presses: answer = low * high
-    return answer, events
+    if find_rx:
+        raise ValueError("Unable to determine the first low pulse at rx")
+    return answer
 
 
-def part1(d): return simulate(d)[0]
+def part1(d): return simulate(d)
 
 
 def part2(d):
-    _, e = simulate(d, 5_000_000)
-    if "rx" in e: return e["rx"]
-    cycles = [v[-1] - v[-2] for k, v in e.items() if isinstance(v, list) and len(v) >= 2]
-    if not cycles: raise ValueError("Could not infer input cycles to rx")
-    return lcm(*cycles)
+    return simulate(d, 5_000_000, find_rx=True)
 
 
 if __name__ == "__main__":

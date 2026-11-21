@@ -1,4 +1,3 @@
-from functools import lru_cache
 from pathlib import Path
 import re
 
@@ -9,27 +8,48 @@ def maximum(line, minutes):
     costs = ((ore, 0, 0), (clay, 0, 0), (obore, obclay, 0), (geore, 0, geobs));
     maxcost = tuple(max(c[i] for c in costs) for i in range(3))
 
-    @lru_cache(None)
-    def dfs(t, ore, clay, obs, ro, rc, rb, rg):
-        if t == 0: return 0
-        best = rg * t
-        for typ, cost in enumerate(costs):
-            if typ < 3 and (ro, rc, rb)[typ] >= maxcost[typ]: continue
-            waits = [];
-            possible = True
-            for need, have, rate in zip(cost, (ore, clay, obs), (ro, rc, rb)):
-                if need > have:
-                    if not rate: possible = False;break
-                    waits.append((need - have + rate - 1) // rate)
-            if not possible: continue
-            dt = max(waits, default=0) + 1
-            if dt >= t: continue
-            state = (ore + ro * dt - cost[0], clay + rc * dt - cost[1], obs + rb * dt - cost[2], ro + (typ == 0),
-                     rc + (typ == 1), rb + (typ == 2), rg + (typ == 3))
-            best = max(best, rg * dt + dfs(t - dt, *state))
-        return best
+    best = 0
+    seen = {}
 
-    return dfs(minutes, 0, 0, 0, 1, 0, 0, 0)
+    def search(time, resources, robots, geodes):
+        nonlocal best
+        best = max(best, geodes)
+        # Even building a geode robot every remaining minute cannot beat best.
+        if geodes + time * (time - 1) // 2 <= best:
+            return
+        resources = tuple(
+            min(stock, cap * time - rate * (time - 1))
+            for stock, cap, rate in zip(resources, maxcost, robots)
+        )
+        state = time, resources, robots
+        if seen.get(state, -1) >= geodes:
+            return
+        seen[state] = geodes
+
+        for kind in (3, 2, 1, 0):
+            if kind < 3 and robots[kind] >= maxcost[kind]:
+                continue
+            cost = costs[kind]
+            wait = 0
+            for need, stock, rate in zip(cost, resources, robots):
+                if need > stock:
+                    if rate == 0:
+                        break
+                    wait = max(wait, (need - stock + rate - 1) // rate)
+            else:
+                elapsed = wait + 1
+                remaining = time - elapsed
+                if remaining <= 0:
+                    continue
+                stock = tuple(
+                    have + rate * elapsed - need
+                    for have, rate, need in zip(resources, robots, cost)
+                )
+                rates = tuple(rate + (index == kind) for index, rate in enumerate(robots))
+                search(remaining, stock, rates, geodes + (remaining if kind == 3 else 0))
+
+    search(minutes, (0, 0, 0), (1, 0, 0), 0)
+    return best
 
 
 def part1(d): return sum(i * maximum(line, 24) for i, line in enumerate((x for x in d.splitlines() if x.strip()), 1))

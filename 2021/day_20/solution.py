@@ -2,25 +2,29 @@ from pathlib import Path
 
 
 def enhance(d, steps):
-    algo, raw = d.strip().split("\n\n");
-    lit = {(x, y) for y, r in enumerate(raw.splitlines()) for x, c in enumerate(r) if c == "#"};
-    background = "."
+    algorithm, raw = d.strip().split("\n\n")
+    pixels = [[c == "#" for c in row] for row in raw.splitlines()]
+    background = False
     for _ in range(steps):
-        if not lit: break
-        xs = [x for x, y in lit];
-        ys = [y for x, y in lit];
-        new = set()
-        for y in range(min(ys) - 1, max(ys) + 2):
-            for x in range(min(xs) - 1, max(xs) + 2):
-                bits = "".join(
-                    "1" if (xx, yy) in lit else ("1" if background == "#" else "0") for yy in range(y - 1, y + 2) for xx
-                    in range(x - 1, x + 2));
-                v = algo[int(bits, 2)]
-                if v == "#": new.add((x, y))
-        background = algo[0 if background == "." else 511];
-        lit = new
-        if background == "#": raise ValueError("Infinite number of lit pixels after requested enhancement")
-    return len(lit)
+        width = len(pixels[0]) + 4
+        border = [background] * width
+        padded = [border, border]
+        padded.extend([background, background, *row, background, background] for row in pixels)
+        padded.extend([border, border])
+        pixels = []
+        for y in range(1, len(padded) - 1):
+            row = []
+            for x in range(1, width - 1):
+                index = 0
+                for yy in range(y - 1, y + 2):
+                    for xx in range(x - 1, x + 2):
+                        index = (index << 1) | padded[yy][xx]
+                row.append(algorithm[index] == "#")
+            pixels.append(row)
+        background = algorithm[511 if background else 0] == "#"
+    if background:
+        raise ValueError("Infinite number of lit pixels after requested enhancement")
+    return sum(map(sum, pixels))
 
 
 def part1(d): return enhance(d, 2)

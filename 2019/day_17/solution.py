@@ -20,11 +20,12 @@ def path_tokens(g):
     dirs = [(0, -1), (1, 0), (0, 1), (-1, 0)];
     sc = {"^": 0, ">": 1, "v": 2, "<": 3}
     y, x, d = next((y, x, sc[c]) for y, row in enumerate(g) for x, c in enumerate(row) if c in sc);
+    scaffold = {(x, y) for y, row in enumerate(g) for x, tile in enumerate(row) if tile in "#^v<>"}
     tokens = []
     while True:
-        if g[y + dirs[(d + 1) % 4][1]][x + dirs[(d + 1) % 4][0]] == "#":
+        if (x + dirs[(d + 1) % 4][0], y + dirs[(d + 1) % 4][1]) in scaffold:
             d = (d + 1) % 4;tokens.append("R")
-        elif g[y + dirs[(d - 1) % 4][1]][x + dirs[(d - 1) % 4][0]] == "#":
+        elif (x + dirs[(d - 1) % 4][0], y + dirs[(d - 1) % 4][1]) in scaffold:
             d = (d - 1) % 4;tokens.append("L")
         else:
             break

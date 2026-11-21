@@ -58,7 +58,8 @@ def solve(d):
     for r in range(n):
         for inner in range(1, len(b[0][1]) - 1): image.append("".join(b[r * n + c][1][inner][1:-1] for c in range(n)))
     monsters = ("                  # ", "#    ##    ##    ###", " #  #  #  #  #  #   ")
-    best = 0
+    total = sum(row.count("#") for row in image)
+    best = total
     for g in variants(tuple(image)):
         h = len(g);
         w = len(g[0]);
@@ -67,7 +68,7 @@ def solve(d):
             for x in range(w - 19):
                 points = {(x + dx, y + dy) for dy, row in enumerate(monsters) for dx, ch in enumerate(row) if ch == "#"}
                 if all(g[py][px] == "#" for px, py in points): found |= points
-        best = max(best, sum(row.count("#") for row in g) - len(found))
+        best = min(best, total - len(found))
     return corner, best
 
 

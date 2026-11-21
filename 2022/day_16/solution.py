@@ -1,4 +1,3 @@
-from functools import lru_cache
 from pathlib import Path
 import re
 
@@ -21,18 +20,37 @@ def solve(d):
             for v in edges[n]:
                 if v not in seen: seen.add(v);q.append((v, k + 1))
 
-    @lru_cache(None)
-    def best(pos, time, mask):
-        ans = 0
-        for i, v in enumerate(useful):
-            if mask >> i & 1: continue
-            rem = time - dist[pos, v] - 1
-            if rem > 0: ans = max(ans, flow[v] * rem + best(v, rem, mask | 1 << i))
-        return ans
+    count = len(useful)
+    size = 1 << count
 
-    one = best("AA", 30, 0);
-    n = len(useful);
-    two = max(best("AA", 26, m) + best("AA", 26, ((1 << n) - 1) ^ m) for m in range(1 << n))
+    def scores(minutes):
+        result = [0] * size
+        seen = {}
+
+        def visit(position, time, opened, score):
+            state = (position, time, opened)
+            if seen.get(state, -1) >= score:
+                return
+            seen[state] = score
+            result[opened] = max(result[opened], score)
+            for i, valve in enumerate(useful):
+                bit = 1 << i
+                remaining = time - dist[position, valve] - 1
+                if remaining > 0 and not opened & bit:
+                    visit(valve, remaining, opened | bit, score + flow[valve] * remaining)
+
+        visit("AA", minutes, 0, 0)
+        return result
+
+    one = max(scores(30))
+    two_actor_scores = scores(26)
+    # For each allowed set, either use its current best or leave out a valve.
+    for i in range(count):
+        bit = 1 << i
+        for mask in range(size):
+            if mask & bit:
+                two_actor_scores[mask] = max(two_actor_scores[mask], two_actor_scores[mask ^ bit])
+    two = max(score + two_actor_scores[size - 1 - mask] for mask, score in enumerate(two_actor_scores))
     return one, two
 
 
@@ -44,5 +62,6 @@ def part2(d): return solve(d)[1]
 
 if __name__ == "__main__":
     d = Path(__file__).with_name("input.txt").read_text();
-    print("Part 1:", part1(d));
-    print("Part 2:", part2(d))
+    one, two = solve(d)
+    print("Part 1:", one)
+    print("Part 2:", two)

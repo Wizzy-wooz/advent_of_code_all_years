@@ -4,7 +4,7 @@ import sys
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]));
 from intcode import Computer
 
-WALK = "NOT A J\nNOT C T\nAND D T\nNOT B J\nAND D J\nOR T J\nWALK\n"
+WALK = "NOT A J\nNOT B T\nOR T J\nNOT C T\nOR T J\nAND D J\nWALK\n"
 RUN = "NOT A J\nNOT B T\nOR T J\nNOT C T\nOR T J\nAND D J\nNOT E T\nNOT T T\nOR H T\nAND T J\nRUN\n"
 
 

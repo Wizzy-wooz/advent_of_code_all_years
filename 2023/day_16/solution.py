@@ -13,9 +13,16 @@ def energized(g, start):
         seen.add((x, y, dx, dy));
         cells.add((x, y));
         c = g[y][x]
-        dirs = [(dx, dy)] if c == "." or c == "-" and dy == 0 or c == "|" and dx == 0 else [
-            (-dy, -dx)] if c == "/" else [(dy, dx)] if c == "\\" else [(0, -1), (0, 1)] if c == "-" else [(-1, 0),
-                                                                                                          (1, 0)]
+        if c == "/":
+            dirs = [(-dy, -dx)]
+        elif c == "\\":
+            dirs = [(dy, dx)]
+        elif c == "-" and dy:
+            dirs = [(-1, 0), (1, 0)]
+        elif c == "|" and dx:
+            dirs = [(0, -1), (0, 1)]
+        else:
+            dirs = [(dx, dy)]
         stack.extend((x + a, y + b, a, b) for a, b in dirs)
     return len(cells)
 

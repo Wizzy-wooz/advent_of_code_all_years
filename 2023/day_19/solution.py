@@ -41,8 +41,8 @@ def part2(d):
             cond, dest = rule.split(":");
             key, op, n = cond[0], cond[1], int(cond[2:]);
             lo, hi = remaining[key]
-            good = (lo, n - 1) if op == "<" else (n + 1, hi);
-            bad = (n, hi) if op == "<" else (lo, n)
+            good = (lo, min(hi, n - 1)) if op == "<" else (max(lo, n + 1), hi);
+            bad = (max(lo, n), hi) if op == "<" else (lo, min(hi, n))
             if good[0] <= good[1]: r = remaining.copy();r[key] = good;total += count(dest, r)
             if bad[0] > bad[1]: break
             remaining = remaining.copy();

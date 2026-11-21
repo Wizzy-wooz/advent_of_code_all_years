@@ -15,7 +15,7 @@ def part1(data):
 
 def part2(data):
     p = list(map(int, data.strip().split(",")));
-    x = y = 0
+    x, y = 0, 99
     while True:
         while not beam(p, x, y): x += 1
         if beam(p, x + 99, y - 99): return x * 10000 + (y - 99)

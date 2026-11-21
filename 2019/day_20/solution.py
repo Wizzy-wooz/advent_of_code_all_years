@@ -32,6 +32,7 @@ def shortest(data, recursive=False):
         for x, y in pts:
             if x <= 2 or y <= 2 or x >= w - 3 or y >= h - 3: outer.add((x, y))
     mate = {p: q for pts in ps.values() for p, q in ([pts] if len(pts) == 2 else [])}
+    mate.update({destination: source for source, destination in mate.items()})
     q = deque([(start, 0, 0)]);
     seen = {(start, 0)}
     while q:

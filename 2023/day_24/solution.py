@@ -11,8 +11,8 @@ def part1(d, lo=200000000000000, hi=400000000000000):
     a = parse(d);
     count = 0
     for p, q in combinations(a, 2):
-        x, y, vx, vy = p[:4];
-        X, Y, VX, VY = q[:4];
+        x, y, _, vx, vy, _ = p
+        X, Y, _, VX, VY, _ = q
         det = vx * VY - vy * VX
         if not det: continue
         t = Fraction((X - x) * VY - (Y - y) * VX, det);
@@ -27,7 +27,7 @@ def part2(d):
     # Linearized cross-product equations for rock position and velocity.
     for (x, y, z, vx, vy, vz), (X, Y, Z, VX, VY, VZ) in zip(h, h[1:]):
         rows += [[0, vz - VZ, VY - vy, 0, Z - z, y - Y, (y * vz - z * vy) - (Y * VZ - Z * VY)],
-                 [vz * -1 + VZ, 0, vx - VX, Z * -1 + z, 0, x - X, (z * vy - x * vz) - (Z * VY - X * VZ)],
+                 [vz * -1 + VZ, 0, vx - VX, z - Z, 0, X - x, (z * vx - x * vz) - (Z * VX - X * VZ)],
                  [vy - VY, VX - vx, 0, Y - y, x - X, 0, (x * vy - y * vx) - (X * VY - Y * VX)]]
     m = [[Fraction(v) for v in r] for r in rows]
     for c in range(6):

@@ -1,4 +1,6 @@
 from collections import deque
+from functools import cache
+from math import inf
 from pathlib import Path
 
 
@@ -10,25 +12,47 @@ def solve(data, split=False):
         for dx, dy in ((0, 0), (1, 0), (-1, 0), (0, 1), (0, -1)): g[y + dy][x + dx] = "#"
         starts = [(x + dx, y + dy) for dx, dy in ((-1, -1), (1, -1), (-1, 1), (1, 1))]
         for x, y in starts: g[y][x] = "@"
-    keys = sum(1 for r in g for c in r if c.islower());
-    goal = (1 << keys) - 1
-    q = deque([(tuple(starts), 0, 0)]);
-    seen = {(tuple(starts), 0)};
-    dirs = ((0, -1), (0, 1), (-1, 0), (1, 0))
-    while q:
-        pos, mask, dist = q.popleft()
-        if mask == goal: return dist
-        for i, (x, y) in enumerate(pos):
-            for dx, dy in dirs:
-                nx, ny = x + dx, y + dy;
-                c = g[ny][nx]
-                if c == "#" or (c.isupper() and not mask & (1 << (ord(c.lower()) - 97))): continue
-                newmask = mask | (1 << (ord(c) - 97)) if c.islower() else mask
-                np = list(pos);
-                np[i] = (nx, ny);
-                state = (tuple(np), newmask)
-                if state not in seen: seen.add(state);q.append((state[0], newmask, dist + 1))
-    raise ValueError("Not all keys are reachable")
+    goal = sum(1 << (ord(c) - 97) for row in g for c in row if c.islower())
+
+    @cache
+    def reachable(start, mask):
+        queue = deque([(start, 0)])
+        visited = {start}
+        keys = []
+        while queue:
+            (x, y), distance = queue.popleft()
+            for position in ((x + 1, y), (x - 1, y), (x, y + 1), (x, y - 1)):
+                if position in visited:
+                    continue
+                visited.add(position)
+                nx, ny = position
+                tile = g[ny][nx]
+                if tile == "#":
+                    continue
+                if tile.isalpha():
+                    bit = 1 << (ord(tile.lower()) - 97)
+                    if not mask & bit:
+                        if tile.islower():
+                            keys.append((position, bit, distance + 1))
+                        continue
+                queue.append((position, distance + 1))
+        return keys
+
+    @cache
+    def remaining(positions, mask):
+        if mask == goal:
+            return 0
+        best = inf
+        for i, start in enumerate(positions):
+            for key, bit, distance in reachable(start, mask):
+                moved = positions[:i] + (key,) + positions[i + 1:]
+                best = min(best, distance + remaining(moved, mask | bit))
+        return best
+
+    answer = remaining(tuple(starts), 0)
+    if answer == inf:
+        raise ValueError("Not all keys are reachable")
+    return answer
 
 
 def part1(data): return solve(data)
