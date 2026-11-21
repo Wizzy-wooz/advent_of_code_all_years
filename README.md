@@ -4,6 +4,12 @@
 
 Every December, a new trail of puzzles appears: follow clues, untangle odd little machines, and earn stars one challenge at a time. This repository is a year-by-year notebook for that winter coding tradition—from the very first season to the next one on the horizon.
 
+## Eleven seasons completed
+
+From the first stars in 2015 through the latest finished season in 2025, eleven Decembers of puzzles solved and memories made.
+
+![Completed Advent of Code seasons, 2015–2025](2015-2025.png)
+
 ## Choose your December
 
 | Year | Season |
