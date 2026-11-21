@@ -33,6 +33,6 @@ def part2(d):
 
 
 if __name__ == "__main__":
-    d = Path(__file__).with_name("input.txt").read_text();
-    print("Part 1:", part1(d));
+    d = Path(__file__).with_name("input.txt").read_text()
+    ##print("Part 1:", part1(d))
     print("Part 2:", part2(d))
