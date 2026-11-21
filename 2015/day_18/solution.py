@@ -21,7 +21,7 @@ def simulate(lines: list[str], stuck_corners: bool = False, steps: int = 100) ->
                                 for dr in (-1, 0, 1) for dc in (-1, 0, 1)
                                 if dr or dc)
                 next_grid[r][c] = '#' if (grid[r][c] == '#' and neighbors in (2, 3)
-                                           or grid[r][c] == '.' and neighbors == 3) else '.'
+                                          or grid[r][c] == '.' and neighbors == 3) else '.'
         grid = next_grid
         if stuck_corners:
             force_corners(grid)

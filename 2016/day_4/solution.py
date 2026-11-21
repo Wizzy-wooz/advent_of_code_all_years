@@ -2,7 +2,6 @@ from collections import Counter
 from pathlib import Path
 import re
 
-
 ROOM_PATTERN = re.compile(r'([a-z-]+)-(\d+)\[([a-z]+)\]')
 
 

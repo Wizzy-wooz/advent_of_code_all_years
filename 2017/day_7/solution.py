@@ -2,7 +2,6 @@ from collections import Counter
 from pathlib import Path
 import re
 
-
 LINE_PATTERN = re.compile(r"^(\w+) \((\d+)\)(?: -> (.*))?$")
 
 

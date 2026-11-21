@@ -21,11 +21,14 @@ def solve(data: str, extra: bool = False) -> int:
 
 
 def part1(data: str) -> int: return solve(data)
+
+
 def part2(data: str) -> int: return solve(data, True)
 
 
 if __name__ == '__main__':
     from pathlib import Path
+
     data = Path(__file__).with_name('input.txt').read_text()
     print(f'Part 1: {part1(data)}')
     print(f'Part 2: {part2(data)}')

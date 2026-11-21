@@ -1,5 +1,6 @@
 from pathlib import Path
 
+
 def dance(data: str, count: int = 1, size: int = 16) -> str:
     moves = data.strip().split(",")
     programs = [chr(ord("a") + i) for i in range(size)]
@@ -26,11 +27,14 @@ def dance(data: str, count: int = 1, size: int = 16) -> str:
         iteration += 1
     return "".join(programs)
 
+
 def part1(data: str) -> str:
     return dance(data)
 
+
 def part2(data: str) -> str:
     return dance(data, 1_000_000_000)
+
 
 if __name__ == "__main__":
     data = Path(__file__).with_name("input.txt").read_text()

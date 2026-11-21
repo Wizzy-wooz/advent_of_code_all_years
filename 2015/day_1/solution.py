@@ -23,4 +23,3 @@ if __name__ == '__main__':
     instructions = Path(__file__).with_name('input.txt').read_text()
     print(f'Part 1: {part1(instructions)}')
     print(f'Part 2: {part2(instructions)}')
-

@@ -1,6 +1,5 @@
 from pathlib import Path
 
-
 SUFFIX = [17, 31, 73, 47, 23]
 
 

@@ -4,7 +4,6 @@ from math import isqrt
 from pathlib import Path
 import re
 
-
 Vector = tuple[int, int, int]
 Particle = tuple[Vector, Vector, Vector]
 VECTOR_PATTERN = re.compile(r"<\s*(-?\d+)\s*,\s*(-?\d+)\s*,\s*(-?\d+)\s*>")

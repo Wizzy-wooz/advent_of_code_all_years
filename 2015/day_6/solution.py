@@ -1,7 +1,6 @@
 import re
 from pathlib import Path
 
-
 COMMAND = re.compile(r'(turn on|turn off|toggle) (\d+),(\d+) through (\d+),(\d+)')
 
 

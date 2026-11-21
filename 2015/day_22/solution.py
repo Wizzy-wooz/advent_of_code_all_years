@@ -1,7 +1,6 @@
 import heapq
 from pathlib import Path
 
-
 SPELLS = ((53, 'missile'), (73, 'drain'), (113, 'shield'),
           (173, 'poison'), (229, 'recharge'))
 

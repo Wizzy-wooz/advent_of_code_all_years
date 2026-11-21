@@ -4,6 +4,7 @@ from pathlib import Path
 
 SUFFIX = [17, 31, 73, 47, 23]
 
+
 def knot_hash(text: str) -> list[int]:
     values = list(range(256))
     lengths = [*text.encode(), *SUFFIX]
@@ -17,11 +18,14 @@ def knot_hash(text: str) -> list[int]:
             skip += 1
     return [reduce(int.__xor__, values[i:i + 16]) for i in range(0, 256, 16)]
 
+
 def disk(key: str) -> list[list[int]]:
     return [[(byte >> bit) & 1 for byte in knot_hash(f"{key}-{row}") for bit in range(7, -1, -1)] for row in range(128)]
 
+
 def part1(data: str) -> int:
     return sum(map(sum, disk(data.strip())))
+
 
 def part2(data: str) -> int:
     grid = disk(data.strip())
@@ -41,6 +45,7 @@ def part2(data: str) -> int:
                         seen.add((nr, nc))
                         queue.append((nr, nc))
     return regions
+
 
 if __name__ == "__main__":
     data = Path(__file__).with_name("input.txt").read_text()

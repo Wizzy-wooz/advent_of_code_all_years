@@ -1,5 +1,6 @@
 from pathlib import Path
 
+
 def variants(pattern: tuple[str, ...]) -> set[tuple[str, ...]]:
     result = set()
     current = pattern
@@ -9,6 +10,7 @@ def variants(pattern: tuple[str, ...]) -> set[tuple[str, ...]]:
         current = tuple("".join(row) for row in zip(*current[::-1]))
     return result
 
+
 def parse(data: str) -> dict[tuple[str, ...], tuple[str, ...]]:
     rules = {}
     for line in data.splitlines():
@@ -17,6 +19,7 @@ def parse(data: str) -> dict[tuple[str, ...], tuple[str, ...]]:
             output = tuple(dest.split("/"))
             for form in variants(tuple(source.split("/"))): rules[form] = output
     return rules
+
 
 def enhance(data: str, iterations: int) -> int:
     rules = parse(data)
@@ -30,12 +33,17 @@ def enhance(data: str, iterations: int) -> int:
             for bc in range(blocks):
                 square = tuple(grid[br * size + r][bc * size:bc * size + size] for r in range(size))
                 replacement = rules[square]
-                for r, row in enumerate(replacement): result[br * output_size + r][bc * output_size:bc * output_size + output_size] = row
+                for r, row in enumerate(replacement): result[br * output_size + r][
+                    bc * output_size:bc * output_size + output_size] = row
         grid = tuple("".join(row) for row in result)
     return sum(row.count("#") for row in grid)
 
+
 def part1(data: str) -> int: return enhance(data, 5)
+
+
 def part2(data: str) -> int: return enhance(data, 18)
+
 
 if __name__ == "__main__":
     data = Path(__file__).with_name("input.txt").read_text()

@@ -1,5 +1,6 @@
 from pathlib import Path
 
+
 def part1(data: str) -> int:
     step = int(data.strip())
     buffer = [0]
@@ -9,6 +10,7 @@ def part1(data: str) -> int:
         buffer.insert(position, value)
     return buffer[(buffer.index(2017) + 1) % len(buffer)]
 
+
 def part2(data: str, insertions: int = 50_000_000) -> int:
     step = int(data.strip())
     position = value_after_zero = 0
@@ -17,6 +19,7 @@ def part2(data: str, insertions: int = 50_000_000) -> int:
         if position == 1:
             value_after_zero = value
     return value_after_zero
+
 
 if __name__ == "__main__":
     data = Path(__file__).with_name("input.txt").read_text()

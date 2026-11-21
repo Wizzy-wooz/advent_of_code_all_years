@@ -17,11 +17,14 @@ def passwords(door_id: str) -> tuple[str, str]:
 
 
 def part1(data: str) -> str: return passwords(data)[0]
+
+
 def part2(data: str) -> str: return passwords(data)[1]
 
 
 if __name__ == '__main__':
     from pathlib import Path
+
     data = Path(__file__).with_name('input.txt').read_text()
     first, second = passwords(data)
     print(f'Part 1: {first}')

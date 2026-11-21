@@ -1,6 +1,5 @@
 from pathlib import Path
 
-
 MOVES = {
     '^': (0, 1),
     'v': (0, -1),

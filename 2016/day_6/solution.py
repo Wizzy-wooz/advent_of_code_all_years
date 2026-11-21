@@ -13,11 +13,14 @@ def decode(data: str, least: bool = False) -> str:
 
 
 def part1(data: str) -> str: return decode(data)
+
+
 def part2(data: str) -> str: return decode(data, True)
 
 
 if __name__ == '__main__':
     from pathlib import Path
+
     data = Path(__file__).with_name('input.txt').read_text()
     print(f'Part 1: {part1(data)}')
     print(f'Part 2: {part2(data)}')
